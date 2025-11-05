@@ -31,7 +31,7 @@ public class Accident {
     @Column(name = "address_street", nullable = false)
     private String addressStreet;
     @Column(name = "address_number", nullable = false)
-    private Integer addressNumber;
+    private String addressNumber;
     @Column(nullable = false)
     private String causes;
     @Column(name = "assessment_status", nullable = false)

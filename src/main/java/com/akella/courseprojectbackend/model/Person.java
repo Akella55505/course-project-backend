@@ -27,10 +27,10 @@ public class Person {
     @Column(name = "driver_license", unique = true)
     @Convert(converter = DriverLicenseConverter.class)
     private DriverLicense driverLicense;
-    @Column(unique = true)
+    @Column(nullable = false)
     private String patronymic;
-    @Column(unique = true)
+    @Column(nullable = false)
     private String surname;
-    @Column(unique = true)
+    @Column(nullable = false)
     private String name;
 }
