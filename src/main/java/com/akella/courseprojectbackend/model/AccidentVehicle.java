@@ -26,10 +26,8 @@ public class AccidentVehicle {
 
     @Embeddable
     public static class Id implements Serializable {
-        @Column(name = "accident_id")
         private Long accidentId;
 
-        @Column(name = "vehicle_id")
         private Long vehicleId;
 
         public Id() {}
