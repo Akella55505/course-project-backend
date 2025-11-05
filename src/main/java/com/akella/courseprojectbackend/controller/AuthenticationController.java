@@ -7,7 +7,6 @@ import com.akella.courseprojectbackend.security.AuthenticationResponse;
 import com.akella.courseprojectbackend.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,6 +1,5 @@
 package com.akella.courseprojectbackend.model;
 
-import com.akella.courseprojectbackend.enums.AccidentRole;
 import jakarta.persistence.*;
 
 import java.io.Serializable;

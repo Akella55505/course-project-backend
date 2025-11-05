@@ -1,6 +1,5 @@
 package com.akella.courseprojectbackend.model;
 
-import com.akella.courseprojectbackend.type.Media;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
