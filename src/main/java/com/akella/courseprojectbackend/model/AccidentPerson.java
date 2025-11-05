@@ -1,5 +1,6 @@
 package com.akella.courseprojectbackend.model;
 
+import com.akella.courseprojectbackend.converter.AccidentRoleConverter;
 import com.akella.courseprojectbackend.enums.AccidentRole;
 import jakarta.persistence.*;
 
@@ -14,18 +15,18 @@ public class AccidentPerson {
     private Id id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("accidentId")
+    @MapsId
     @JoinColumn(name = "accident_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_accident_person_accident"))
     private Accident accident;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("personId")
+    @MapsId
     @JoinColumn(name = "person_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_accident_person_person"))
     private Person person;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = AccidentRoleConverter.class)
     @Column(nullable = false)
     private AccidentRole role = AccidentRole.CULPRIT;
 

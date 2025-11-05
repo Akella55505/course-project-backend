@@ -1,5 +1,7 @@
 package com.akella.courseprojectbackend.model;
 
+import com.akella.courseprojectbackend.converter.AssessmentStatusConverter;
+import com.akella.courseprojectbackend.converter.ConsiderationStatusConverter;
 import com.akella.courseprojectbackend.converter.MediaConverter;
 import com.akella.courseprojectbackend.enums.AssessmentStatus;
 import com.akella.courseprojectbackend.enums.ConsiderationStatus;
@@ -35,10 +37,10 @@ public class Accident {
     @Column(nullable = false)
     private String causes;
     @Column(name = "assessment_status", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = AssessmentStatusConverter.class)
     private AssessmentStatus assessment_status = AssessmentStatus.IN_REVIEW;
     @Column(name = "consideration_status", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ConsiderationStatusConverter.class)
     private ConsiderationStatus consideration_status = ConsiderationStatus.REGISTERED;
     @Column(name = "type", nullable = false)
     private String type;
