@@ -1,6 +1,5 @@
 package com.akella.courseprojectbackend;
 
-import com.akella.courseprojectbackend.exception.IncorrectPasswordException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,12 +19,6 @@ public class ControllerAdvice {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<?> handleUsernameNotFound(UsernameNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("error", ex.getMessage()));
-    }
-
-    @ExceptionHandler(IncorrectPasswordException.class)
-    public ResponseEntity<?> handleIncorrectPassword(IncorrectPasswordException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(Map.of("error", ex.getMessage()));
     }

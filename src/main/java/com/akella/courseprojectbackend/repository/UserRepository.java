@@ -1,6 +1,5 @@
 package com.akella.courseprojectbackend.repository;
 
-
 import com.akella.courseprojectbackend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 

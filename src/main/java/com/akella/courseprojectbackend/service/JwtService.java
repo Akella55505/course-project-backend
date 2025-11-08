@@ -1,5 +1,6 @@
 package com.akella.courseprojectbackend.service;
 
+import com.akella.courseprojectbackend.enums.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -19,7 +20,6 @@ import java.util.function.Function;
 @Setter
 @ConfigurationProperties(prefix = "course-project.api")
 public class JwtService {
-
     private String secret;
     private long expirationTime;
 
@@ -31,6 +31,7 @@ public class JwtService {
         return Jwts.builder()
                 .claims(extraClaims)
                 .subject(userDetails.getUsername())
+                .claim("role", userDetails.getAuthorities().iterator().next().getAuthority())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSignInKey())
@@ -39,6 +40,10 @@ public class JwtService {
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role").toString();
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
