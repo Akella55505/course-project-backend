@@ -13,13 +13,13 @@ public class AccidentVehicle {
     private Id id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("accidentId")
+    @MapsId
     @JoinColumn(name = "accident_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_accident_vehicle_accident"))
     private Accident accident;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("personId")
+    @MapsId
     @JoinColumn(name = "vehicle_id", nullable = false,
             foreignKey = @ForeignKey(name = "fk_accident_vehicle_vehicle"))
     private Vehicle vehicle;

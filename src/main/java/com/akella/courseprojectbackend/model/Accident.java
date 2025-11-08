@@ -22,7 +22,6 @@ import java.sql.Time;
 @Entity
 @Table(name = "accident")
 public class Accident {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
