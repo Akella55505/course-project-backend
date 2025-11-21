@@ -23,7 +23,7 @@ public class MedicalReport {
     @JoinColumn(name = "accident_id", referencedColumnName = "id", nullable = false)
     private Accident accident;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "medic_id", referencedColumnName = "license_id", nullable = false)
+    @JoinColumn(name = "medic_id", referencedColumnName = "medic_id", nullable = false)
     private Medic medic;
     @ManyToOne(optional = false)
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
