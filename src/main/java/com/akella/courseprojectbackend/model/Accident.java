@@ -37,12 +37,12 @@ public class Accident {
     private String causes;
     @Column(name = "assessment_status", nullable = false)
     @Convert(converter = AssessmentStatusConverter.class)
-    private AssessmentStatus assessment_status = AssessmentStatus.IN_REVIEW;
+    private AssessmentStatus assessmentStatus = AssessmentStatus.IN_REVIEW;
     @Column(name = "consideration_status", nullable = false)
     @Convert(converter = ConsiderationStatusConverter.class)
-    private ConsiderationStatus consideration_status = ConsiderationStatus.REGISTERED;
-    @Column(name = "type", nullable = false)
+    private ConsiderationStatus considerationStatus = ConsiderationStatus.REGISTERED;
+    @Column(nullable = false)
     private String type;
-    @Column(name = "time", nullable = false)
+    @Column(nullable = false)
     private Time time;
 }
