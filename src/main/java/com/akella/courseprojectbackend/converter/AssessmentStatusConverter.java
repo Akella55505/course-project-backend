@@ -8,7 +8,6 @@ import java.util.Arrays;
 
 @Converter(autoApply = true)
 public class AssessmentStatusConverter implements AttributeConverter<AssessmentStatus, String> {
-
     @Override
     public String convertToDatabaseColumn(AssessmentStatus attribute) {
         return attribute.getStatus();
