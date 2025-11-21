@@ -33,4 +33,6 @@ public class Person {
     private String surname;
     @Column(nullable = false)
     private String name;
+    @Column(unique = true)
+    private String email = null;
 }

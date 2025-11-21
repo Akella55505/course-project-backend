@@ -16,14 +16,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "medic")
 public class Medic {
-
     @Id
-    @Column(name = "license_id")
-    private Long id;
+    @Column(name = "medic_id")
+    private Long medicId;
     @Column(nullable = false)
     private String patronymic;
     @Column(nullable = false)
     private String surname;
     @Column(nullable = false)
     private String name;
+    @Column(unique = true)
+    private String email = null;
 }
