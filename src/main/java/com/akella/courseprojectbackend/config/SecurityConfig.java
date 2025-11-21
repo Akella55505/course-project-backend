@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,12 +24,9 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final AuthenticationProvider authenticationProvider;
 
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
-                          AuthenticationProvider authenticationProvider) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-        this.authenticationProvider = authenticationProvider;
     }
 
     @Bean
@@ -41,8 +37,22 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/accidents/**").authenticated()
-                        .requestMatchers("/persons/**").authenticated()
+                        .requestMatchers("/accidents/user").hasAuthority("USER")
+                        .requestMatchers(HttpMethod.POST, "/accidents").hasAuthority("POLICE")
+                        .requestMatchers("/accidents/**").hasAnyAuthority("ADMIN", "COURT", "POLICE", "INSURANCE", "MEDIC")
+                        .requestMatchers(HttpMethod.PATCH, "/persons").hasAuthority("USER")
+                        .requestMatchers("/persons/{id}").hasAuthority("POLICE")
+                        .requestMatchers("/persons/**").hasAnyAuthority("ADMIN", "COURT", "POLICE", "INSURANCE", "MEDIC")
+                        .requestMatchers("/vehicles/**").hasAnyAuthority("ADMIN", "COURT", "POLICE", "INSURANCE")
+                        .requestMatchers("/court-decisions").hasAuthority("COURT")
+                        .requestMatchers("/insurance/**").hasAuthority("INSURANCE")
+                        .requestMatchers("/medics").hasAuthority("MEDIC")
+                        .requestMatchers("/medical-reports").hasAuthority("MEDIC")
+                        .requestMatchers("/policemen").hasAuthority("POLICE")
+                        .requestMatchers("/administrative-decisions").hasAuthority("POLICE")
+                        .requestMatchers(HttpMethod.GET, "/administrative-decisions").hasAnyAuthority("ADMIN", "COURT", "POLICE")
+                        .requestMatchers(HttpMethod.POST, "/applications").hasAnyAuthority("USER")
+                        .requestMatchers(HttpMethod.GET, "/applications").hasAnyAuthority("ADMIN", "POLICE")
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(session -> session
@@ -52,7 +62,6 @@ public class SecurityConfig {
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint())
                         .accessDeniedHandler(jwtAccessDeniedHandler())
                 )
-                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
