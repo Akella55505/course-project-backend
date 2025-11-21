@@ -1,4 +1,4 @@
-package com.akella.courseprojectbackend.model;
+package com.akella.courseprojectbackend.model.auth;
 
 import com.akella.courseprojectbackend.enums.Role;
 import jakarta.persistence.*;
@@ -18,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "auth._user")
+@Table(name = "_user")
 public class User implements UserDetails {
 
     @Id
