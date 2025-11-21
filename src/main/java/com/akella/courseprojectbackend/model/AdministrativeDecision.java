@@ -23,7 +23,7 @@ public class AdministrativeDecision {
     @JoinColumn(name = "accident_id", referencedColumnName = "id", nullable = false)
     private Accident accident;
     @ManyToOne(optional = false)
-    @JoinColumn(name = "policeman_id", referencedColumnName = "officer_id", nullable = false)
+    @JoinColumn(name = "policeman_id", referencedColumnName = "policeman_id", nullable = false)
     private Policeman policeman;
     @ManyToOne(optional = false)
     @JoinColumn(name = "person_id", referencedColumnName = "id", nullable = false)
