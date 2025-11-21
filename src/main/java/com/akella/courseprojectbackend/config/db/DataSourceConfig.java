@@ -14,8 +14,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Configuration
 public class DataSourceConfig {
 
+    private final Environment environment;
+
     @Autowired
-    private Environment environment;
+    public DataSourceConfig(Environment environment) {
+        this.environment = environment;
+    }
 
     @Bean
     @Primary

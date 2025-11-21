@@ -1,7 +1,6 @@
 package com.akella.courseprojectbackend.converter;
 
 import com.akella.courseprojectbackend.enums.AccidentRole;
-import com.akella.courseprojectbackend.enums.AssessmentStatus;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
