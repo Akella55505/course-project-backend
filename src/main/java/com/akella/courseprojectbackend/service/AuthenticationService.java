@@ -42,7 +42,7 @@ public class AuthenticationService {
         if (!registered) throw new UserAlreadyExistsException("User with this email already exists");
     }
 
-    public AuthenticationResponse login(UserDto loginData) throws SQLException {
+    public AuthenticationResponse login(UserDto loginData) {
         Role role;
         Connection connection;
         try {
