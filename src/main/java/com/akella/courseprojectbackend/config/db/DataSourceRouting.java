@@ -25,6 +25,7 @@ public final class DataSourceRouting extends AbstractRoutingDataSource {
         super.afterPropertiesSet();
     }
 
+    @SuppressWarnings("unused")
     public void removeDataSource(String key) {
         this.targetDataSources.remove(key);
         super.afterPropertiesSet();
