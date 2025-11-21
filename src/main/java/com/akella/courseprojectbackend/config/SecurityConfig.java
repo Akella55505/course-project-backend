@@ -39,6 +39,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/accidents/user").hasAuthority("USER")
                         .requestMatchers(HttpMethod.POST, "/accidents").hasAuthority("POLICE")
+                        .requestMatchers("/accidents/statistics").hasAuthority("POLICE")
                         .requestMatchers("/accidents/**").hasAnyAuthority("ADMIN", "COURT", "POLICE", "INSURANCE", "MEDIC")
                         .requestMatchers(HttpMethod.PATCH, "/persons").hasAuthority("USER")
                         .requestMatchers("/persons/{id}").hasAuthority("POLICE")
