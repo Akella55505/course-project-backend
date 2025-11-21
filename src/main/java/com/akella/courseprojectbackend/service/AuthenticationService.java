@@ -45,7 +45,8 @@ public class AuthenticationService {
     public AuthenticationResponse login(UserDto loginData) {
         Role role;
         Connection connection;
-        try (Connection credentialCheck = DriverManager.getConnection(
+        // Credential check
+        try (Connection ignored = DriverManager.getConnection(
                 Objects.requireNonNull(environment.getProperty("spring.datasource.url")),
                 loginData.getEmail(), loginData.getPassword())) {
             if (dataSourceRouting.dataSourceExists(loginData.getEmail())) {
