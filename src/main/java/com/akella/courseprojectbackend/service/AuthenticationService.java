@@ -1,13 +1,16 @@
 package com.akella.courseprojectbackend.service;
 
+import com.akella.courseprojectbackend.config.db.DataSourceContextHolder;
+import com.akella.courseprojectbackend.config.db.DataSourceRouting;
 import com.akella.courseprojectbackend.dto.UserDto;
 import com.akella.courseprojectbackend.enums.Role;
-import com.akella.courseprojectbackend.exception.UserAlreadyExistsException;
-import com.akella.courseprojectbackend.model.User;
+import com.akella.courseprojectbackend.model.auth.User;
 import com.akella.courseprojectbackend.security.AuthenticationResponse;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import com.akella.courseprojectbackend.exception.UserAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
@@ -16,12 +19,12 @@ import java.sql.*;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
-
-    private final PasswordEncoder passwordEncoder;
+    private final Environment environment;
     private final JwtService jwtService;
     private final DataSource dataSource;
+    private final DataSourceRouting dataSourceRouting;
 
-    public AuthenticationResponse register(UserDto registrationData) throws SQLException {
+    public void register(UserDto registrationData) throws SQLException {
         boolean registered;
 
         Connection connection = dataSource.getConnection();
@@ -29,7 +32,7 @@ public class AuthenticationService {
         try (CallableStatement call = connection.prepareCall("{ call auth.register_user(?, ?, ?) }")) {
 
             call.setString(1, registrationData.getEmail());
-            call.setString(2, passwordEncoder.encode(registrationData.getPassword()));
+            call.setString(2, registrationData.getPassword());
             call.registerOutParameter(3, Types.BOOLEAN);
 
             call.execute();
@@ -37,42 +40,39 @@ public class AuthenticationService {
         }
 
         if (!registered) throw new UserAlreadyExistsException("User with this email already exists");
-
-        var token = jwtService.generateToken(
-                User.builder().email(registrationData.getEmail()).password(registrationData.getPassword()).role(Role.USER).build()
-        );
-
-        return AuthenticationResponse.builder()
-                .token(token)
-                .build();
     }
 
     public AuthenticationResponse login(UserDto loginData) throws SQLException {
-        boolean authenticated;
         Role role;
+        Connection connection;
+        try {
+            if (!dataSourceRouting.dataSourceExists(loginData.getEmail())) {
+                DataSource dataSource = DataSourceBuilder.create()
+                        .driverClassName(environment.getProperty("spring.datasource.driver-class-name"))
+                        .url(environment.getProperty("spring.datasource.url"))
+                        .username(loginData.getEmail())
+                        .password(loginData.getPassword())
+                        .build();
 
-        Connection connection = dataSource.getConnection();
-        connection.setAutoCommit(true);
-        try (CallableStatement call = connection.prepareCall("{ call auth.authenticate_user(?, ?, ?, ?) }")) {
+                dataSourceRouting.addDataSource(loginData.getEmail(), dataSource);
 
-            call.setString(1, loginData.getEmail());
-            call.setString(2, loginData.getPassword());
-            call.registerOutParameter(3, Types.BOOLEAN);
-            call.registerOutParameter(4, Types.VARCHAR);
+                connection = dataSource.getConnection();
+            } else {
+                DataSourceContextHolder.set(loginData.getEmail());
+                connection = dataSource.getConnection();
+            }
+
+            CallableStatement call = connection.prepareCall("{ call auth.get_role(?) }");
+            call.registerOutParameter(1, Types.VARCHAR);
 
             call.execute();
-            authenticated = call.getBoolean(3);
-            role = Role.valueOf(call.getString(4));
+            role = Role.valueOf(call.getString(1).split("_")[0].toUpperCase());
+        } catch (Exception e) {
+            throw new BadCredentialsException("Invalid credentials");
         }
 
-        if (!authenticated) throw new BadCredentialsException("Invalid credentials");
+        User user = User.builder().email(loginData.getEmail()).password(loginData.getPassword()).role(role).build();
 
-        var token = jwtService.generateToken(
-                User.builder().email(loginData.getEmail()).password(loginData.getPassword()).role(role).build()
-        );
-
-        return AuthenticationResponse.builder()
-                .token(token)
-                .build();
+        return AuthenticationResponse.builder().token(jwtService.generateToken(user)).build();
     }
 }
