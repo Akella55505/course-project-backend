@@ -1,15 +1,13 @@
 package com.akella.courseprojectbackend.config.db;
 
-import com.akella.courseprojectbackend.enums.Role;
-
 public class DataSourceContextHolder {
-    private static final ThreadLocal<Role> CONTEXT = new ThreadLocal<>();
+    private static final ThreadLocal<String> CONTEXT = new ThreadLocal<>();
 
-    public static void set(Role key) {
+    public static void set(String key) {
         CONTEXT.set(key);
     }
 
-    public static Role get() {
+    public static String get() {
         return CONTEXT.get();
     }
 
