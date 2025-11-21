@@ -15,19 +15,19 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final Environment environment;
     private final JwtService jwtService;
-    private final DataSource dataSource;
     private final DataSourceRouting dataSourceRouting;
 
     public void register(UserDto registrationData) throws SQLException {
         boolean registered;
 
-        Connection connection = dataSource.getConnection();
+        Connection connection = dataSourceRouting.getConnection();
         connection.setAutoCommit(true);
         try (CallableStatement call = connection.prepareCall("{ call auth.register_user(?, ?, ?) }")) {
 
@@ -45,21 +45,21 @@ public class AuthenticationService {
     public AuthenticationResponse login(UserDto loginData) {
         Role role;
         Connection connection;
-        try {
-            if (!dataSourceRouting.dataSourceExists(loginData.getEmail())) {
+        try (Connection credentialCheck = DriverManager.getConnection(
+                Objects.requireNonNull(environment.getProperty("spring.datasource.url")),
+                loginData.getEmail(), loginData.getPassword())) {
+            if (dataSourceRouting.dataSourceExists(loginData.getEmail())) {
+                DataSourceContextHolder.set(loginData.getEmail());
+                connection = dataSourceRouting.getConnection();
+            } else {
                 DataSource dataSource = DataSourceBuilder.create()
                         .driverClassName(environment.getProperty("spring.datasource.driver-class-name"))
                         .url(environment.getProperty("spring.datasource.url"))
                         .username(loginData.getEmail())
                         .password(loginData.getPassword())
                         .build();
-
+                connection = dataSource.getConnection();
                 dataSourceRouting.addDataSource(loginData.getEmail(), dataSource);
-
-                connection = dataSource.getConnection();
-            } else {
-                DataSourceContextHolder.set(loginData.getEmail());
-                connection = dataSource.getConnection();
             }
 
             CallableStatement call = connection.prepareCall("{ call auth.get_role(?) }");
