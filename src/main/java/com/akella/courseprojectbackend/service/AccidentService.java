@@ -1,6 +1,7 @@
 package com.akella.courseprojectbackend.service;
 
 import com.akella.courseprojectbackend.ApplicationUtils;
+import com.akella.courseprojectbackend.dto.AccidentStatisticsDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentPersonDto;
 import com.akella.courseprojectbackend.dto.register.AccidentRegisterDto;
@@ -81,5 +82,14 @@ public class AccidentService {
             ps.setLong(2, personsRoles.keySet().iterator().next());
             ps.setString(3, personsRoles.values().iterator().next().getRole());
         });
+    }
+
+    public List<AccidentStatisticsDto> getStatistics(Date startDate, Date endDate, Time startTime, Time endTime, String addressStreet, String addressNumber, String type) {
+        if (startDate == null) startDate = new Date(0);
+        if (endDate == null) endDate = new Date(System.currentTimeMillis());
+        if (startTime == null) startTime = Time.valueOf("00:00:00");
+        if (endTime == null) endTime = Time.valueOf("23:59:59");
+        return accidentRepository.getStatistics(startDate, endDate, startTime, endTime, addressStreet, addressNumber, type,
+                PageRequest.of(0, 10));
     }
 }

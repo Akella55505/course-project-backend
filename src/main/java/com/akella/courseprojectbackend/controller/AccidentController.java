@@ -98,6 +98,23 @@ public class AccidentController {
         return ResponseEntity.ok(userData);
     }
 
+    @GetMapping("/statistics")
+    public ResponseEntity<List<AccidentStatisticsDto>> getStatistics(@RequestParam(required = false) Date startDate,
+                                                               @RequestParam(required = false) Date endDate,
+                                                               @RequestParam(required = false) Time startTime,
+                                                               @RequestParam(required = false) Time endTime,
+                                                               @RequestParam(required = false) String addressStreet,
+                                                               @RequestParam(required = false) String addressNumber,
+                                                               @RequestParam(required = false) String type) {
+        List<AccidentStatisticsDto> response;
+        try {
+            response = accidentService.getStatistics(startDate, endDate, startTime, endTime, addressStreet, addressNumber, type);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@RequestBody AccidentRegisterDto accidentRegisterDto) {
         try {

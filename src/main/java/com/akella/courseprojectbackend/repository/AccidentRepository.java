@@ -1,5 +1,6 @@
 package com.akella.courseprojectbackend.repository;
 
+import com.akella.courseprojectbackend.dto.AccidentStatisticsDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentBaseDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentPersonDto;
 import com.akella.courseprojectbackend.dto.userData.UserAccidentDto;
@@ -58,4 +59,17 @@ public interface AccidentRepository extends JpaRepository<Accident, Long> {
     WHERE ap.person.id = :personId
     """)
     List<AccidentPersonDto> findAllByPersonId(Long personId);
+
+    @Query("""
+    SELECT new com.akella.courseprojectbackend.dto.AccidentStatisticsDto(COUNT(a), a.causes)
+    FROM Accident a
+    WHERE (a.date > :startDate) AND (a.date < :endDate) AND (a.time > :startTime) AND (a.time < :endTime)
+    AND (CAST(:addressStreet AS STRING) IS NULL OR a.addressStreet = :addressStreet)
+    AND (CAST(:addressNumber AS STRING) IS NULL OR a.addressNumber = :addressNumber)
+    AND (CAST(:type AS STRING) IS NULL OR a.type = :type)
+    GROUP BY a.causes
+    ORDER BY COUNT(a) DESC
+    """)
+    List<AccidentStatisticsDto> getStatistics(Date startDate, Date endDate, Time startTime, Time endTime, String addressStreet,
+                                        String addressNumber, String type, Pageable pageable);
 }
