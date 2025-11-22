@@ -84,12 +84,13 @@ public class AccidentService {
         });
     }
 
-    public List<AccidentStatisticsDto> getStatistics(Date startDate, Date endDate, Time startTime, Time endTime, String addressStreet, String addressNumber, String type) {
+    public List<AccidentStatisticsDto> getStatistics(Date startDate, Date endDate, Time startTime, Time endTime,
+                                                     String addressStreet, String addressNumber, String type, Integer pageIndex) {
         if (startDate == null) startDate = new Date(0);
         if (endDate == null) endDate = new Date(System.currentTimeMillis());
         if (startTime == null) startTime = Time.valueOf("00:00:00");
         if (endTime == null) endTime = Time.valueOf("23:59:59");
         return accidentRepository.getStatistics(startDate, endDate, startTime, endTime, addressStreet, addressNumber, type,
-                PageRequest.of(0, 10));
+                PageRequest.of(pageIndex, 10));
     }
 }
