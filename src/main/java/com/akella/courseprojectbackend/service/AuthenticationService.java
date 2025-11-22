@@ -6,14 +6,14 @@ import com.akella.courseprojectbackend.dto.UserDto;
 import com.akella.courseprojectbackend.enums.Role;
 import com.akella.courseprojectbackend.model.auth.User;
 import com.akella.courseprojectbackend.security.AuthenticationResponse;
-import org.springframework.boot.jdbc.DataSourceBuilder;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import com.akella.courseprojectbackend.exception.UserAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
-import javax.sql.DataSource;
 import java.sql.*;
 import java.util.Objects;
 
@@ -53,12 +53,13 @@ public class AuthenticationService {
                 DataSourceContextHolder.set(loginData.getEmail());
                 connection = dataSourceRouting.getConnection();
             } else {
-                DataSource dataSource = DataSourceBuilder.create()
-                        .driverClassName(environment.getProperty("spring.datasource.driver-class-name"))
-                        .url(environment.getProperty("spring.datasource.url"))
-                        .username(loginData.getEmail())
-                        .password(loginData.getPassword())
-                        .build();
+                HikariConfig config = new HikariConfig();
+                config.setJdbcUrl(environment.getProperty("spring.datasource.url"));
+                config.setUsername(loginData.getEmail());
+                config.setPassword(loginData.getPassword());
+                config.setMaximumPoolSize(5);
+                config.setIdleTimeout(600000);
+                HikariDataSource dataSource = new HikariDataSource(config);
                 connection = dataSource.getConnection();
                 dataSourceRouting.addDataSource(loginData.getEmail(), dataSource);
             }
