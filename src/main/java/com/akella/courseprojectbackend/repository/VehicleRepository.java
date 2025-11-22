@@ -4,7 +4,6 @@ import com.akella.courseprojectbackend.dto.VehicleDto;
 import com.akella.courseprojectbackend.dto.userData.UserVehicleDto;
 import com.akella.courseprojectbackend.model.Vehicle;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
