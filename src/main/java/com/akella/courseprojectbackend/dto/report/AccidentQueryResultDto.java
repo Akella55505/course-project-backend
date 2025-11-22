@@ -1,7 +1,5 @@
 package com.akella.courseprojectbackend.dto.report;
 
-import lombok.Data;
-
 public record AccidentQueryResultDto(Long reportCount,
                                      String reportStreet,
                                      Long streetCount,

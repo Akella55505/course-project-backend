@@ -1,7 +1,6 @@
 package com.akella.courseprojectbackend.repository;
 
 import com.akella.courseprojectbackend.dto.report.AccidentQueryResultDto;
-import com.akella.courseprojectbackend.dto.report.AccidentReportDto;
 import com.akella.courseprojectbackend.dto.AccidentStatisticsDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentBaseDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentPersonDto;
