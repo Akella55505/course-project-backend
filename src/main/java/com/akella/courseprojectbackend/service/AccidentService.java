@@ -31,7 +31,7 @@ public class AccidentService {
     private final AccidentMedicRepository accidentMedicRepository;
     private final JdbcTemplate jdbcTemplate;
 
-    public List<? extends AccidentDto> gerAllByDateTimeAddress(Date date, Time time, String addressStreet, String addressNumber,
+    public List<? extends AccidentDto> getAllByDateTimeAddress(Date date, Time time, String addressStreet, String addressNumber,
                                                                List<Long> personIds, Integer pageIndex) {
         switch (ApplicationUtils.getRoleFromContext()) {
             case MEDIC -> {
