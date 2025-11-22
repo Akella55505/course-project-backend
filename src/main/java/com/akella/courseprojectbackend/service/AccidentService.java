@@ -1,6 +1,8 @@
 package com.akella.courseprojectbackend.service;
 
 import com.akella.courseprojectbackend.ApplicationUtils;
+import com.akella.courseprojectbackend.dto.report.AccidentQueryResultDto;
+import com.akella.courseprojectbackend.dto.report.AccidentReportDto;
 import com.akella.courseprojectbackend.dto.AccidentStatisticsDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentPersonDto;
@@ -8,8 +10,10 @@ import com.akella.courseprojectbackend.dto.register.AccidentRegisterDto;
 import com.akella.courseprojectbackend.dto.userData.UserAccidentDto;
 import com.akella.courseprojectbackend.enums.AssessmentStatus;
 import com.akella.courseprojectbackend.enums.ConsiderationStatus;
+import com.akella.courseprojectbackend.enums.Daytime;
 import com.akella.courseprojectbackend.model.Accident;
 import com.akella.courseprojectbackend.repository.AccidentRepository;
+import com.akella.courseprojectbackend.repository.PersonRepository;
 import com.akella.courseprojectbackend.repository.view.AccidentInsuranceRepository;
 import com.akella.courseprojectbackend.repository.view.AccidentMedicRepository;
 import jakarta.transaction.Transactional;
@@ -29,6 +33,7 @@ public class AccidentService {
     private final AccidentRepository accidentRepository;
     private final AccidentInsuranceRepository accidentInsuranceRepository;
     private final AccidentMedicRepository accidentMedicRepository;
+    private final PersonRepository personRepository;
     private final JdbcTemplate jdbcTemplate;
 
     public List<? extends AccidentDto> getAllByDateTimeAddress(Date date, Time time, String addressStreet, String addressNumber,
@@ -84,13 +89,42 @@ public class AccidentService {
         });
     }
 
+    private Object[] setNullCriteria(Date startDate, Date endDate, Time startTime, Time endTime) {
+        Date newStartDate = startDate == null ? new Date(0) : startDate;
+        Date newEndDate = endDate == null ? new Date(System.currentTimeMillis()) : endDate;
+        Time newStartTime = startTime == null ? Time.valueOf("00:00:00") : startTime;
+        Time newEndTime = endTime == null ? Time.valueOf("23:59:59") : endTime;
+        return new Object[]{ newStartDate, newEndDate, newStartTime, newEndTime };
+    }
+
     public List<AccidentStatisticsDto> getStatistics(Date startDate, Date endDate, Time startTime, Time endTime,
                                                      String addressStreet, String addressNumber, String type, Integer pageIndex) {
-        if (startDate == null) startDate = new Date(0);
-        if (endDate == null) endDate = new Date(System.currentTimeMillis());
-        if (startTime == null) startTime = Time.valueOf("00:00:00");
-        if (endTime == null) endTime = Time.valueOf("23:59:59");
-        return accidentRepository.getStatistics(startDate, endDate, startTime, endTime, addressStreet, addressNumber, type,
-                PageRequest.of(pageIndex, 10));
+        Object[] criteria = setNullCriteria(startDate, endDate, startTime, endTime);
+        return accidentRepository.getStatistics((Date) criteria[0], (Date) criteria[1], (Time) criteria[2], (Time) criteria[3],
+                addressStreet, addressNumber, type, PageRequest.of(pageIndex, 10));
+    }
+
+    public List<Long> getIdsByCriteria(Date startDate, Date endDate, Time startTime, Time endTime, String addressStreet,
+                                            String addressNumber, String type) {
+        Object[] criteria = setNullCriteria(startDate, endDate, startTime, endTime);
+        return accidentRepository.findAllIdsByCriteria((Date) criteria[0], (Date) criteria[1], (Time) criteria[2],
+                (Time) criteria[3], addressStreet, addressNumber, type);
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    public void generateReport(AccidentReportDto response, List<Long> accidentIds) {
+        AccidentQueryResultDto accidentQueryResultDto = accidentRepository.generateReport(accidentIds);
+        if (accidentQueryResultDto == null) return;
+        response.setReportCount(accidentQueryResultDto.reportCount());
+        response.setReportStreet(accidentQueryResultDto.reportStreet());
+        response.setStreetCount(accidentQueryResultDto.streetCount());
+        response.setReportCauses(accidentQueryResultDto.reportCauses());
+        response.setCausesCount(accidentQueryResultDto.causesCount());
+        response.setReportType(accidentQueryResultDto.reportType());
+        response.setTypeCount(accidentQueryResultDto.typeCount());
+        response.setReportDaytime(Daytime.valueOf(accidentQueryResultDto.reportDaytime()));
+        response.setDaytimeCount(accidentQueryResultDto.daytimeCount());
+        response.setReportDriver(personRepository.findById(accidentQueryResultDto.reportDriverId()).get());
+        response.setDriverCount(accidentQueryResultDto.driverCount());
     }
 }

@@ -1,6 +1,7 @@
 package com.akella.courseprojectbackend.repository;
 
 import com.akella.courseprojectbackend.dto.ViolationDto;
+import com.akella.courseprojectbackend.dto.report.ViolationQueryResultDto;
 import com.akella.courseprojectbackend.dto.userData.UserViolationDto;
 import com.akella.courseprojectbackend.model.Violation;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,4 +29,19 @@ public interface ViolationRepository extends JpaRepository<Violation, Long> {
     List<UserViolationDto> findAllUserData();
 
     List<ViolationDto> findAllByPersonId(Long personid);
+
+    @Query(value = """
+            WITH accident_scope AS (
+                    SELECT * FROM accident WHERE id IN :accidentIds
+            ),
+            report_violation AS (
+                    SELECT violation, COUNT(*) AS cnt
+                    FROM violation v JOIN accident_scope ascope ON v.accident_id = ascope.id
+                    GROUP BY violation
+                    ORDER BY COUNT(*) DESC
+            LIMIT 1
+            )
+            SELECT rv.violation, rv.cnt FROM report_violation rv
+    """, nativeQuery = true)
+    ViolationQueryResultDto generateReport(List<Long> accidentIds);
 }

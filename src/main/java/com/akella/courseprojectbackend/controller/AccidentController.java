@@ -4,6 +4,7 @@ import com.akella.courseprojectbackend.ApplicationUtils;
 import com.akella.courseprojectbackend.dto.*;
 import com.akella.courseprojectbackend.dto.person.PersonDto;
 import com.akella.courseprojectbackend.dto.register.AccidentRegisterDto;
+import com.akella.courseprojectbackend.dto.report.AccidentReportDto;
 import com.akella.courseprojectbackend.dto.userData.*;
 import com.akella.courseprojectbackend.dto.accident.AccidentDto;
 import com.akella.courseprojectbackend.enums.Role;
@@ -33,12 +34,12 @@ public class AccidentController {
     private final AccidentVehicleService accidentVehicleService;
     private final PersonService personService;
     private final MedicalReportService medicalReportService;
+    private final ViolationService violationService;
 
     private static final Set<Role> MEDICAL_ACCESS = EnumSet.of(Role.MEDIC, Role.INSURANCE, Role.COURT, Role.POLICE);
     private static final Set<Role> VEHICLE_ACCESS = EnumSet.of(Role.INSURANCE, Role.COURT, Role.POLICE);
     private static final Set<Role> INSURANCE_ACCESS = EnumSet.of(Role.INSURANCE, Role.POLICE);
     private static final Set<Role> LAW_ACCESS = EnumSet.of(Role.COURT, Role.POLICE);
-    private final ViolationService violationService;
 
     public void getDataByRole(Role role, List<Long> accidentIds, AccidentDataDto accidentDataDto) {
         if (MEDICAL_ACCESS.contains(role)) {
@@ -73,7 +74,7 @@ public class AccidentController {
         Role role = ApplicationUtils.getRoleFromContext();
         List<? extends PersonDto> personList = personService.getAllByNameAndSurnameAndPatronymic(name, surname, patronymic);
         List<Long> personIds = personList.isEmpty() ? null : personList.stream().map(PersonDto::getId).toList();
-        List<? extends AccidentDto> accidentList = accidentService.gerAllByDateTimeAddress(date, time,
+        List<? extends AccidentDto> accidentList = accidentService.getAllByDateTimeAddress(date, time,
                 addressStreet, addressNumber, personIds, pageIndex);
         List<Long> accidentIds =  accidentList.isEmpty() ? null : accidentList.stream().map(AccidentDto::getId).toList();
         personList = personService.getAllByAccidentIds(accidentIds);
@@ -100,16 +101,38 @@ public class AccidentController {
 
     @GetMapping("/statistics")
     public ResponseEntity<List<AccidentStatisticsDto>> getStatistics(@RequestParam(required = false) Date startDate,
-                                                               @RequestParam(required = false) Date endDate,
-                                                               @RequestParam(required = false) Time startTime,
-                                                               @RequestParam(required = false) Time endTime,
-                                                               @RequestParam(required = false) String addressStreet,
-                                                               @RequestParam(required = false) String addressNumber,
-                                                               @RequestParam(required = false) String type) {
+                                                                     @RequestParam(required = false) Date endDate,
+                                                                     @RequestParam(required = false) Time startTime,
+                                                                     @RequestParam(required = false) Time endTime,
+                                                                     @RequestParam(required = false) String addressStreet,
+                                                                     @RequestParam(required = false) String addressNumber,
+                                                                     @RequestParam(required = false) String type,
+                                                                     @RequestParam Integer pageIndex) {
         List<AccidentStatisticsDto> response;
         try {
-            response = accidentService.getStatistics(startDate, endDate, startTime, endTime, addressStreet, addressNumber, type);
+            response = accidentService.getStatistics(startDate, endDate, startTime, endTime, addressStreet, addressNumber,
+                    type, pageIndex);
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/report")
+    public ResponseEntity<AccidentReportDto> generateReport(@RequestParam(required = false) Date startDate,
+                                                            @RequestParam(required = false) Date endDate,
+                                                            @RequestParam(required = false) Time startTime,
+                                                            @RequestParam(required = false) Time endTime,
+                                                            @RequestParam(required = false) String addressStreet,
+                                                            @RequestParam(required = false) String addressNumber,
+                                                            @RequestParam(required = false) String type) {
+        AccidentReportDto response = new AccidentReportDto();
+        try {
+            List<Long> accidentIds = accidentService.getIdsByCriteria(startDate, endDate, startTime, endTime, addressStreet, addressNumber, type);
+            accidentService.generateReport(response, accidentIds);
+            violationService.generateReport(response, accidentIds);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(response);
