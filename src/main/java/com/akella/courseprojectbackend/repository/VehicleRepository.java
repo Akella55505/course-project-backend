@@ -35,11 +35,12 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
 
     List<VehicleDto> findAllByPersonId(Long personId);
 
-    @Modifying
+    @SuppressWarnings("SpringDataModifyingAnnotationMissing")
     @Query(value = """
     INSERT INTO vehicle (vin, make, model, license_plate, person_id) VALUES (:vin, :make, :model, :license_plate,
                                                                                  :person_id)
+    RETURNING id
     """, nativeQuery = true)
-    void saveEntry(@Param("vin") String vin, @Param("make") String make, @Param("model") String model,
+    Long saveEntry(@Param("vin") String vin, @Param("make") String make, @Param("model") String model,
                    @Param("license_plate") String licensePlate, @Param("person_id") Long personId);
 }

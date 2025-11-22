@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,12 +28,13 @@ public class VehicleController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody VehicleDto vehicleDto) {
+    public ResponseEntity<Map<String, Long>> create(@RequestBody VehicleDto vehicleDto) {
+        Long vehicleId;
         try {
-            vehicleService.create(vehicleDto);
+            vehicleId = vehicleService.create(vehicleDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok(Map.of("id", vehicleId));
     }
 }

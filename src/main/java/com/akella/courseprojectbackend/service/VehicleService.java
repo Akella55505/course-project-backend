@@ -29,8 +29,8 @@ public class VehicleService {
         return vehicleRepository.findAllByPersonId(personId);
     }
 
-    public void create(VehicleDto vehicleDto) {
-        vehicleRepository.saveEntry(vehicleDto.vin(), vehicleDto.make(), vehicleDto.model(), vehicleDto.licensePlate(),
+    public Long create(VehicleDto vehicleDto) {
+        return vehicleRepository.saveEntry(vehicleDto.vin(), vehicleDto.make(), vehicleDto.model(), vehicleDto.licensePlate(),
                 vehicleDto.personId());
     }
 }

@@ -35,8 +35,8 @@ public class PersonService {
         }
     }
 
-    public void createPerson(Person person) {
-        personRepository.save(person);
+    public Long createPerson(Person person) {
+        return personRepository.save(person).getId();
     }
 
     public void updateEmailByPassportDetails(PassportDetails passportDetails, String email) {

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,13 +29,14 @@ public class PersonController {
     private final ViolationService violationService;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Person person) {
+    public ResponseEntity<Map<String, Long>> create(@RequestBody Person person) {
+        Long personId;
         try {
-            personService.createPerson(person);
+            personId = personService.createPerson(person);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok(Map.of("id", personId));
     }
 
     @GetMapping
