@@ -1,3 +1,3 @@
 package com.akella.courseprojectbackend.dto;
 
-public record AccidentStatisticsDto(Long accidentAmount, String causes) {}
+public record AccidentStatisticsDto(Long accidentAmount, String causes, Long rank) {}

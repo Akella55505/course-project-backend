@@ -62,14 +62,14 @@ public interface AccidentRepository extends JpaRepository<Accident, Long> {
     List<AccidentPersonDto> findAllByPersonId(Long personId);
 
     @Query("""
-    SELECT new com.akella.courseprojectbackend.dto.AccidentStatisticsDto(COUNT(a), a.causes)
+    SELECT new com.akella.courseprojectbackend.dto.AccidentStatisticsDto(COUNT(a), a.causes, DENSE_RANK() OVER (ORDER BY COUNT(a) DESC))
     FROM Accident a
     WHERE (a.date > :startDate) AND (a.date < :endDate) AND (a.time > :startTime) AND (a.time < :endTime)
     AND (CAST(:addressStreet AS STRING) IS NULL OR a.addressStreet = :addressStreet)
     AND (CAST(:addressNumber AS STRING) IS NULL OR a.addressNumber = :addressNumber)
     AND (CAST(:type AS STRING) IS NULL OR a.type = :type)
     GROUP BY a.causes
-    ORDER BY COUNT(a) DESC
+    ORDER BY 1 DESC
     """)
     List<AccidentStatisticsDto> getStatistics(Date startDate, Date endDate, Time startTime, Time endTime, String addressStreet,
                                         String addressNumber, String type, Pageable pageable);
