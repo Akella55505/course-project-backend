@@ -1,5 +1,6 @@
 package com.akella.courseprojectbackend.config.db;
 
+import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.lang.NonNull;
 
@@ -25,8 +26,9 @@ public final class DataSourceRouting extends AbstractRoutingDataSource {
         super.afterPropertiesSet();
     }
 
-    @SuppressWarnings("unused")
     public void removeDataSource(String key) {
+        HikariDataSource dataSource = (HikariDataSource) this.targetDataSources.get(key);
+        dataSource.close();
         this.targetDataSources.remove(key);
         super.afterPropertiesSet();
     }

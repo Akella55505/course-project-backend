@@ -1,5 +1,6 @@
 package com.akella.courseprojectbackend.controller;
 
+import com.akella.courseprojectbackend.ApplicationUtils;
 import com.akella.courseprojectbackend.dto.UserDto;
 import com.akella.courseprojectbackend.security.AuthenticationResponse;
 import com.akella.courseprojectbackend.service.AuthenticationService;
@@ -29,6 +30,16 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> loginUser(@RequestBody UserDto loginData) {
         try {
             return ResponseEntity.ok(authenticationService.login(loginData));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<AuthenticationResponse> logoutUser() {
+        try {
+            authenticationService.logout(ApplicationUtils.getEmailFromContext());
+            return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

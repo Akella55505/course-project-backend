@@ -42,27 +42,24 @@ public class AuthenticationService {
         if (!registered) throw new UserAlreadyExistsException("User with this email already exists");
     }
 
-    public AuthenticationResponse login(UserDto loginData) {
+    public AuthenticationResponse login(UserDto loginData) throws SQLException {
         Role role;
-        Connection connection;
+        Connection connection = null;
         // Credential check
         try (Connection ignored = DriverManager.getConnection(
                 Objects.requireNonNull(environment.getProperty("spring.datasource.url")),
                 loginData.getEmail(), loginData.getPassword())) {
-            if (dataSourceRouting.dataSourceExists(loginData.getEmail())) {
-                DataSourceContextHolder.set(loginData.getEmail());
-                connection = dataSourceRouting.getConnection();
-            } else {
+            if (!dataSourceRouting.dataSourceExists(loginData.getEmail())) {
                 HikariConfig config = new HikariConfig();
                 config.setJdbcUrl(environment.getProperty("spring.datasource.url"));
                 config.setUsername(loginData.getEmail());
                 config.setPassword(loginData.getPassword());
-                config.setMaximumPoolSize(5);
-                config.setIdleTimeout(600000);
+                config.setMaximumPoolSize(1);
                 HikariDataSource dataSource = new HikariDataSource(config);
-                connection = dataSource.getConnection();
                 dataSourceRouting.addDataSource(loginData.getEmail(), dataSource);
             }
+            DataSourceContextHolder.set(loginData.getEmail());
+            connection = dataSourceRouting.getConnection();
 
             CallableStatement call = connection.prepareCall("{ call auth.get_role(?) }");
             call.registerOutParameter(1, Types.VARCHAR);
@@ -71,10 +68,16 @@ public class AuthenticationService {
             role = Role.valueOf(call.getString(1).split("_")[0].toUpperCase());
         } catch (Exception e) {
             throw new BadCredentialsException("Invalid credentials");
+        } finally {
+            if (connection != null) connection.close();
         }
 
         User user = User.builder().email(loginData.getEmail()).password(loginData.getPassword()).role(role).build();
 
         return AuthenticationResponse.builder().token(jwtService.generateToken(user)).build();
+    }
+
+    public void logout(String email) {
+        dataSourceRouting.removeDataSource(email);
     }
 }
