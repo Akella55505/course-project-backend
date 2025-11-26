@@ -124,12 +124,22 @@ public class AccidentController {
     }
 
     @GetMapping("/statistics/streets")
-    public ResponseEntity<?> getStreetsStatistics(@RequestParam Integer pageIndex) {
-        List<AccidentStreetsStatisticsDto> response;
+    public ResponseEntity<List<AccidentStatisticsStreetsDto>> getStatisticsStreets(@RequestParam Integer pageIndex) {
+        List<AccidentStatisticsStreetsDto> response;
         try {
-            response = accidentService.getStreetsStatistics(pageIndex);
+            response = accidentService.getStatisticsStreets(pageIndex);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/statistics/previous-quarter")
+    public ResponseEntity<List<AccidentStatisticsPreviousQuarterDto>> getPreviousQuarterStatistics(@RequestParam Integer pageIndex) {
+        List<AccidentStatisticsPreviousQuarterDto> response;
+        try {
+            response = accidentService.getStatisticsPreviousQuarter(pageIndex);
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(response);

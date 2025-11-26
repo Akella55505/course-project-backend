@@ -1,7 +1,8 @@
 package com.akella.courseprojectbackend.service;
 
 import com.akella.courseprojectbackend.ApplicationUtils;
-import com.akella.courseprojectbackend.dto.AccidentStreetsStatisticsDto;
+import com.akella.courseprojectbackend.dto.AccidentStatisticsPreviousQuarterDto;
+import com.akella.courseprojectbackend.dto.AccidentStatisticsStreetsDto;
 import com.akella.courseprojectbackend.dto.report.AccidentQueryResultDto;
 import com.akella.courseprojectbackend.dto.report.AccidentReportDto;
 import com.akella.courseprojectbackend.dto.AccidentStatisticsDto;
@@ -17,6 +18,7 @@ import com.akella.courseprojectbackend.repository.AccidentRepository;
 import com.akella.courseprojectbackend.repository.PersonRepository;
 import com.akella.courseprojectbackend.repository.view.AccidentInsuranceRepository;
 import com.akella.courseprojectbackend.repository.view.AccidentMedicRepository;
+import com.akella.courseprojectbackend.repository.view.AccidentStatisticsPreviousQuarterRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +37,7 @@ public class AccidentService {
     private final AccidentInsuranceRepository accidentInsuranceRepository;
     private final AccidentMedicRepository accidentMedicRepository;
     private final PersonRepository personRepository;
+    private final AccidentStatisticsPreviousQuarterRepository accidentStatisticsPreviousQuarterRepository;
     private final JdbcTemplate jdbcTemplate;
 
     public List<? extends AccidentDto> getAllByDateTimeAddress(Date date, Time time, String addressStreet, String addressNumber,
@@ -129,7 +132,11 @@ public class AccidentService {
         response.setDriverCount(accidentQueryResultDto.driverCount());
     }
 
-    public List<AccidentStreetsStatisticsDto> getStreetsStatistics(Integer pageIndex) {
-        return accidentRepository.getStreetsStatistics(PageRequest.of(pageIndex, 10));
+    public List<AccidentStatisticsStreetsDto> getStatisticsStreets(Integer pageIndex) {
+        return accidentRepository.getStatisticsStreets(PageRequest.of(pageIndex, 10));
+    }
+
+    public List<AccidentStatisticsPreviousQuarterDto> getStatisticsPreviousQuarter(Integer pageIndex) {
+        return accidentStatisticsPreviousQuarterRepository.getStatisticsPreviousQuarter(PageRequest.of(pageIndex, 10));
     }
 }

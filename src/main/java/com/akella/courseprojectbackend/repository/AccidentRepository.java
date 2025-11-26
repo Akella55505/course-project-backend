@@ -1,6 +1,6 @@
 package com.akella.courseprojectbackend.repository;
 
-import com.akella.courseprojectbackend.dto.AccidentStreetsStatisticsDto;
+import com.akella.courseprojectbackend.dto.AccidentStatisticsStreetsDto;
 import com.akella.courseprojectbackend.dto.report.AccidentQueryResultDto;
 import com.akella.courseprojectbackend.dto.AccidentStatisticsDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentBaseDto;
@@ -206,5 +206,5 @@ public interface AccidentRepository extends JpaRepository<Accident, Long> {
     FROM street_stats
     ORDER BY violation_count DESC
     """, nativeQuery = true)
-    List<AccidentStreetsStatisticsDto> getStreetsStatistics(Pageable pageable);
+    List<AccidentStatisticsStreetsDto> getStatisticsStreets(Pageable pageable);
 }
