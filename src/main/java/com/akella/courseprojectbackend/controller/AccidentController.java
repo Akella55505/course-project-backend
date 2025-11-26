@@ -72,14 +72,19 @@ public class AccidentController {
                                                          @RequestParam(required = false) String patronymic,
                                                          @RequestParam Integer pageIndex) {
         Role role = ApplicationUtils.getRoleFromContext();
-        List<? extends PersonDto> personList = personService.getAllByNameAndSurnameAndPatronymic(name, surname, patronymic);
-        List<Long> personIds = personList.isEmpty() ? null : personList.stream().map(PersonDto::getId).toList();
-        List<? extends AccidentDto> accidentList = accidentService.getAllByDateTimeAddress(date, time,
-                addressStreet, addressNumber, personIds, pageIndex);
-        List<Long> accidentIds =  accidentList.isEmpty() ? null : accidentList.stream().map(AccidentDto::getId).toList();
-        personList = personService.getAllByAccidentIds(accidentIds);
-        AccidentDataDto response = AccidentDataDto.builder().accidentData(accidentList).personData(personList).build();
-        getDataByRole(role, accidentIds, response);
+        AccidentDataDto response;
+        try {
+            List<? extends PersonDto> personList = personService.getAllByNameAndSurnameAndPatronymic(name, surname, patronymic);
+            List<Long> personIds = personList.isEmpty() ? null : personList.stream().map(PersonDto::getId).toList();
+            List<? extends AccidentDto> accidentList = accidentService.getAllByDateTimeAddress(date, time,
+                    addressStreet, addressNumber, personIds, pageIndex);
+            List<Long> accidentIds =  accidentList.isEmpty() ? null : accidentList.stream().map(AccidentDto::getId).toList();
+            personList = personService.getAllByAccidentIds(accidentIds);
+            response = AccidentDataDto.builder().accidentData(accidentList).personData(personList).build();
+            getDataByRole(role, accidentIds, response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(response);
     }
 
@@ -113,6 +118,18 @@ public class AccidentController {
             response = accidentService.getStatistics(startDate, endDate, startTime, endTime, addressStreet, addressNumber,
                     type, pageIndex);
         } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/statistics/streets")
+    public ResponseEntity<?> getStreetsStatistics(@RequestParam Integer pageIndex) {
+        List<AccidentStreetsStatisticsDto> response;
+        try {
+            response = accidentService.getStreetsStatistics(pageIndex);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(response);

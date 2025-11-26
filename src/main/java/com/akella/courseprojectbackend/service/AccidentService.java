@@ -1,6 +1,7 @@
 package com.akella.courseprojectbackend.service;
 
 import com.akella.courseprojectbackend.ApplicationUtils;
+import com.akella.courseprojectbackend.dto.AccidentStreetsStatisticsDto;
 import com.akella.courseprojectbackend.dto.report.AccidentQueryResultDto;
 import com.akella.courseprojectbackend.dto.report.AccidentReportDto;
 import com.akella.courseprojectbackend.dto.AccidentStatisticsDto;
@@ -126,5 +127,9 @@ public class AccidentService {
         response.setDaytimeCount(accidentQueryResultDto.daytimeCount());
         response.setReportDriver(personRepository.findById(accidentQueryResultDto.reportDriverId()).get());
         response.setDriverCount(accidentQueryResultDto.driverCount());
+    }
+
+    public List<AccidentStreetsStatisticsDto> getStreetsStatistics(Integer pageIndex) {
+        return accidentRepository.getStreetsStatistics(PageRequest.of(pageIndex, 10));
     }
 }

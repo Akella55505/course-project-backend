@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/accidents/user").hasAuthority("USER")
                         .requestMatchers(HttpMethod.POST, "/accidents").hasAuthority("POLICE")
                         .requestMatchers("/accidents/report").hasAuthority("POLICE")
-                        .requestMatchers("/accidents/statistics").hasAuthority("POLICE")
+                        .requestMatchers("/accidents/statistics/**").hasAuthority("POLICE")
                         .requestMatchers("/accidents/**").hasAnyAuthority("ADMIN", "COURT", "POLICE", "INSURANCE", "MEDIC")
                         .requestMatchers(HttpMethod.PATCH, "/persons").hasAuthority("USER")
                         .requestMatchers(HttpMethod.POST,"/persons").hasAuthority("POLICE")

@@ -1,5 +1,6 @@
 package com.akella.courseprojectbackend.repository;
 
+import com.akella.courseprojectbackend.dto.AccidentStreetsStatisticsDto;
 import com.akella.courseprojectbackend.dto.report.AccidentQueryResultDto;
 import com.akella.courseprojectbackend.dto.AccidentStatisticsDto;
 import com.akella.courseprojectbackend.dto.accident.AccidentBaseDto;
@@ -141,4 +142,69 @@ public interface AccidentRepository extends JpaRepository<Accident, Long> {
             FROM total_count tc, report_street rs, report_causes rc, report_type rt, report_daytime rd, report_driver rdr
     """, nativeQuery = true)
     AccidentQueryResultDto generateReport(List<Long> accidentIds);
+
+    @Query(value = """
+    WITH pedestrian_accidents AS (
+        SELECT DISTINCT ap.accident_id
+        FROM accident_person ap
+        LEFT JOIN vehicle v
+            ON v.person_id = ap.person_id
+        LEFT JOIN accident_vehicle av
+            ON av.accident_id = ap.accident_id AND av.vehicle_id = v.id
+        WHERE v.id IS NULL OR av.accident_id IS NULL
+    ),
+    street_stats AS (
+        SELECT
+            a.address_street AS street,
+            COUNT(DISTINCT a.id) AS accident_count,
+            COUNT(DISTINCT v.id) AS violation_count,
+            MODE() WITHIN GROUP (ORDER BY v.violation) AS top_violation,
+            COUNT(DISTINCT a.id) FILTER (
+                WHERE a.id IN (SELECT accident_id FROM pedestrian_accidents)
+            ) AS accident_count_pedestrian
+        FROM accident a
+        LEFT JOIN violation v ON v.accident_id = a.id
+        GROUP BY street
+    )
+    SELECT
+        street,
+        violation_count,
+        top_violation,
+        accident_count,
+        accident_count_pedestrian,
+        DENSE_RANK() OVER (ORDER BY violation_count DESC) AS violation_count_rank,
+        DENSE_RANK() OVER (ORDER BY accident_count DESC) AS accident_count_rank,
+        DENSE_RANK() OVER (ORDER BY accident_count_pedestrian DESC) AS accident_count_pedestrian_rank
+    FROM street_stats
+    ORDER BY violation_count DESC
+    """,
+    countQuery = """
+    WITH pedestrian_accidents AS (
+        SELECT DISTINCT ap.accident_id
+        FROM accident_person ap
+        LEFT JOIN vehicle v
+            ON v.person_id = ap.person_id
+        LEFT JOIN accident_vehicle av
+            ON av.accident_id = ap.accident_id AND av.vehicle_id = v.id
+        WHERE v.id IS NULL OR av.accident_id IS NULL
+    ),
+    street_stats AS (
+        SELECT
+            a.address_street AS street,
+            COUNT(DISTINCT a.id) AS accident_count,
+            COUNT(DISTINCT v.id) AS violation_count,
+            mode() WITHIN GROUP (ORDER BY v.violation) AS top_violation,
+            COUNT(DISTINCT a.id) FILTER (
+                WHERE a.id IN (SELECT accident_id FROM pedestrian_accidents)
+            ) AS accident_count_pedestrian
+        FROM accident a
+        LEFT JOIN violation v ON v.accident_id = a.id
+        GROUP BY street
+    )
+    SELECT
+        count(violation_count)
+    FROM street_stats
+    ORDER BY violation_count DESC
+    """, nativeQuery = true)
+    List<AccidentStreetsStatisticsDto> getStreetsStatistics(Pageable pageable);
 }
