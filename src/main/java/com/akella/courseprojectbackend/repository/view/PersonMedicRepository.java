@@ -28,4 +28,12 @@ public interface PersonMedicRepository extends JpaRepository<PersonMedic, Long> 
     WHERE ap.accident.id IN :accidentIds
     """)
     List<PersonMedicDto> findAllByAccidentIds(@Param("accidentIds") List<Long> accidentId);
+
+    @Query("""
+    SELECT new com.akella.courseprojectbackend.dto.person.PersonMedicDto(p.id, p.name, p.surname, p.patronymic)
+    FROM PersonInsurance p
+    JOIN AccidentPerson ap ON ap.person.id = p.id
+    WHERE p.name = :name AND p.surname = :surname AND p.patronymic = :patronymic
+    """)
+    List<PersonMedicDto> findAllByNameAndSurnameAndPatronymic(String name, String surname, String patronymic);
 }

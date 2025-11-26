@@ -46,7 +46,17 @@ public class PersonService {
     }
 
     public List<PersonMedicDto> getAllByNameAndSurnameAndPatronymic(String name, String surname, String patronymic) {
-        return personRepository.findAllByNameAndSurnameAndPatronymic(name, surname, patronymic);
+        switch (ApplicationUtils.getRoleFromContext()) {
+            case MEDIC -> {
+                return personMedicRepository.findAllByNameAndSurnameAndPatronymic(name, surname, patronymic);
+            }
+            case INSURANCE -> {
+                return personInsuranceRepository.findAllByNameAndSurnameAndPatronymic(name, surname, patronymic);
+            }
+            default -> {
+                return personRepository.findAllByNameAndSurnameAndPatronymic(name, surname, patronymic);
+            }
+        }
     }
 
     public PersonBaseDto getById(Long id) {
