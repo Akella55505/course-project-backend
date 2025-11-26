@@ -1,6 +1,5 @@
 package com.akella.courseprojectbackend.dto;
 
-import com.akella.courseprojectbackend.enums.ApplicationStatus;
 import com.akella.courseprojectbackend.type.PassportDetails;
 
 import java.sql.Date;
