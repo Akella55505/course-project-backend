@@ -18,8 +18,12 @@ public class AdministrativeDecisionController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody AdministrativeDecisionDto administrativeDecision) {
-        administrativeDecisionService.create(administrativeDecision.accidentId(),
-                administrativeDecision.personId(), administrativeDecision.decision());
+        try {
+            administrativeDecisionService.create(administrativeDecision.accidentId(),
+                    administrativeDecision.personId(), administrativeDecision.decision());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

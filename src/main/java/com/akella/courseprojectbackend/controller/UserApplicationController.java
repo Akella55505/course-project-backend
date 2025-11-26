@@ -1,5 +1,6 @@
 package com.akella.courseprojectbackend.controller;
 
+import com.akella.courseprojectbackend.dto.UserApplicationDto;
 import com.akella.courseprojectbackend.model.UserApplication;
 import com.akella.courseprojectbackend.service.UserApplicationService;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +38,9 @@ public class UserApplicationController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody UserApplication userApplication) {
+    public ResponseEntity<?> create(@RequestBody UserApplicationDto userApplicationDto) {
         try {
-            userApplicationService.create(userApplication);
+            userApplicationService.create(userApplicationDto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

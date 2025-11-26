@@ -4,6 +4,7 @@ import com.akella.courseprojectbackend.ApplicationUtils;
 import com.akella.courseprojectbackend.dto.MedicalReportDto;
 import com.akella.courseprojectbackend.repository.MedicRepository;
 import com.akella.courseprojectbackend.repository.MedicalReportRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ public class MedicalReportService {
     private final MedicalReportRepository medicalReportRepository;
     private final MedicRepository medicRepository;
 
+    @Transactional
     public void create(MedicalReportDto medicalReportDto) {
         Long medicId = medicRepository.findMedicIdByEmail(ApplicationUtils.getEmailFromContext());
         medicalReportRepository.saveEntry(medicalReportDto.accidentId(), medicalReportDto.personId(),

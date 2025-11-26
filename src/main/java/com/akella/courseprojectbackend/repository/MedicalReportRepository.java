@@ -14,7 +14,7 @@ import java.util.List;
 public interface MedicalReportRepository extends JpaRepository<MedicalReport, Long> {
     @Modifying
     @Query(value = """
-    INSERT INTO medical_report (accident_id, person_id, medic_id, report) VALUES (:accident_id, :person_id, :police_id,
+    INSERT INTO medical_report (accident_id, person_id, medic_id, report) VALUES (:accident_id, :person_id, :medic_id,
                                                                                       :report)
     """, nativeQuery = true)
     void saveEntry(@Param("accident_id") Long accidentId, @Param("person_id") Long personId,

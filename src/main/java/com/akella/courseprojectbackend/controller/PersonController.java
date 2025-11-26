@@ -51,7 +51,7 @@ public class PersonController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updatePersonEmailByPassportDetails(@RequestBody PassportDetails passportDetails, @RequestParam String email) {
+    public ResponseEntity<?> updateEmailByPassportDetails(@RequestBody PassportDetails passportDetails, @RequestParam String email) {
         try {
             personService.updateEmailByPassportDetails(passportDetails, email);
         } catch (Exception e) {

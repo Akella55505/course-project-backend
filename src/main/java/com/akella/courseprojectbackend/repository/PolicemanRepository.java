@@ -13,9 +13,9 @@ public interface PolicemanRepository extends JpaRepository<Policeman, Long> {
     @Modifying
     @Transactional
     @Query(value = """
-    CALL auth.policeman_set_email(:officer_id, :email);
+    CALL auth.policeman_set_email(:policeman_id, :email);
     """, nativeQuery = true)
-    void setEmailByPolicemanId(@Param("officer_id") Long officerId, @Param("email") String email);
+    void setEmailByPolicemanId(@Param("policeman_id") Long policemanId, @Param("email") String email);
 
     @Query("""
     SELECT p.policemanId FROM Policeman p WHERE p.email = :email

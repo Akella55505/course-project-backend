@@ -5,6 +5,7 @@ import com.akella.courseprojectbackend.dto.report.AccidentReportDto;
 import com.akella.courseprojectbackend.dto.report.ViolationQueryResultDto;
 import com.akella.courseprojectbackend.dto.userData.UserViolationDto;
 import com.akella.courseprojectbackend.repository.ViolationRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class ViolationService {
     private final ViolationRepository violationRepository;
 
+    @Transactional
     public void create(ViolationDto violationDto) {
         violationRepository.saveEntry(violationDto.violation(), violationDto.personId(), violationDto.accidentId());
     }
