@@ -43,7 +43,7 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse login(UserDto loginData) throws SQLException {
-        Role role;
+        Role role = null;
         Connection connection = null;
         // Credential check
         try (Connection ignored = DriverManager.getConnection(
@@ -61,11 +61,21 @@ public class AuthenticationService {
             DataSourceContextHolder.set(loginData.getEmail());
             connection = dataSourceRouting.getConnection();
 
-            CallableStatement call = connection.prepareCall("{ call auth.get_role(?) }");
-            call.registerOutParameter(1, Types.VARCHAR);
+            String getRoleSql = """
+                SELECT p.rolname AS parent_role
+                FROM pg_auth_members am
+                JOIN pg_roles pr ON am.member = pr.oid
+                JOIN pg_roles p ON am.roleid = p.oid
+                WHERE pr.rolname = current_user
+            """;
 
-            call.execute();
-            role = Role.valueOf(call.getString(1).split("_")[0].toUpperCase());
+            PreparedStatement preparedStatement = connection.prepareStatement(getRoleSql);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    String parent = rs.getString("parent_role");
+                    role = Role.valueOf(parent.split("_")[0].toUpperCase());
+                }
+            }
         } catch (Exception e) {
             throw new BadCredentialsException("Invalid credentials");
         } finally {
