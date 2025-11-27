@@ -28,7 +28,6 @@ public class AuthenticationService {
         boolean registered;
 
         Connection connection = dataSourceRouting.getConnection();
-        connection.setAutoCommit(true);
         try (CallableStatement call = connection.prepareCall("{ call auth.register_user(?, ?, ?) }")) {
 
             call.setString(1, registrationData.getEmail());
@@ -38,6 +37,8 @@ public class AuthenticationService {
             call.execute();
             registered = call.getBoolean(3);
         }
+
+        connection.close();
 
         if (!registered) throw new UserAlreadyExistsException("User with this email already exists");
     }
