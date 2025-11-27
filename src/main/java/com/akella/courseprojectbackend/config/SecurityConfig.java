@@ -60,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/applications/{id}").hasAuthority("POLICE")
                         .requestMatchers(HttpMethod.POST, "/applications").hasAnyAuthority("USER")
                         .requestMatchers(HttpMethod.GET, "/applications").hasAnyAuthority("ADMIN", "POLICE")
+                        .requestMatchers("/admin").hasAnyAuthority("ADMIN")
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(session -> session
