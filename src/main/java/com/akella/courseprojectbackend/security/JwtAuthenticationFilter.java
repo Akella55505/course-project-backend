@@ -4,6 +4,7 @@ import com.akella.courseprojectbackend.enums.Role;
 import com.akella.courseprojectbackend.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,18 +28,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader("Authorization");
-        final String jwt;
         final String email;
         final Role role;
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
             filterChain.doFilter(request, response);
             return;
         }
-        jwt = authorizationHeader.substring(7);
+
+        String jwt = null;
+        for (Cookie c : cookies) {
+            if ("Token".equals(c.getName())) {
+                jwt = c.getValue();
+                break;
+            }
+        }
+
+        if (jwt == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         email = jwtService.extractEmail(jwt);
         role = jwtService.extractRole(jwt);
+
         request.setAttribute("email", email);
+
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtService.isValid(jwt)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email,
@@ -48,6 +64,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }

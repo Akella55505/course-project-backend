@@ -5,7 +5,9 @@ import com.akella.courseprojectbackend.dto.UserDto;
 import com.akella.courseprojectbackend.security.AuthenticationResponse;
 import com.akella.courseprojectbackend.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +31,15 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> loginUser(@RequestBody UserDto loginData) {
         try {
-            return ResponseEntity.ok(authenticationService.login(loginData));
+            AuthenticationResponse authenticationResponse = authenticationService.login(loginData);
+            ResponseCookie responseCookie = ResponseCookie.from("Token", authenticationResponse.getToken())
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("Strict")
+                    .path("/")
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE,
+                    responseCookie.toString()).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
