@@ -19,16 +19,17 @@ public interface PersonInsuranceRepository extends JpaRepository<PersonInsurance
     FROM Person p
     JOIN AccidentPerson ap ON ap.person.id = p.id
     WHERE ap.accident.id = :accidentId
-""")
+    """)
     List<PersonAccidentRoleDto<PersonInsuranceDto>> findAllByAccidentId(@Param("accidentId") Long accidentId);
 
     @Query("""
-    SELECT new com.akella.courseprojectbackend.dto.person.PersonInsuranceDto(p.id, p.passportDetails, p.name, p.surname, p.patronymic)
+    SELECT new com.akella.courseprojectbackend.dto.person.PersonAccidentRoleDto(ap.accident.id,
+    new com.akella.courseprojectbackend.dto.person.PersonInsuranceDto(p.id, p.passportDetails, p.name, p.surname, p.patronymic), ap.role)
     FROM Person p
     JOIN AccidentPerson ap ON ap.person.id = p.id
     WHERE ap.accident.id IN :accidentIds
     """)
-    List<PersonInsuranceDto> findAllByAccidentIds(@Param("accidentIds") List<Long> accidentId);
+    List<PersonAccidentRoleDto<PersonInsuranceDto>> findAllByAccidentIds(@Param("accidentIds") List<Long> accidentIds);
 
     @Query("""
     SELECT new com.akella.courseprojectbackend.dto.person.PersonMedicDto(p.id, p.name, p.surname, p.patronymic)

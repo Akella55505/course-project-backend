@@ -22,12 +22,13 @@ public interface PersonMedicRepository extends JpaRepository<PersonMedic, Long> 
     List<PersonAccidentRoleDto<PersonMedicDto>> findAllByAccidentId(@Param("accidentId") Long accidentId);
 
     @Query("""
-    SELECT new com.akella.courseprojectbackend.dto.person.PersonMedicDto(p.id, p.name, p.surname, p.patronymic)
+    SELECT new com.akella.courseprojectbackend.dto.person.PersonAccidentRoleDto(ap.accident.id,
+    new com.akella.courseprojectbackend.dto.person.PersonMedicDto(p.id, p.name, p.surname, p.patronymic), ap.role)
     FROM Person p
     JOIN AccidentPerson ap ON ap.person.id = p.id
     WHERE ap.accident.id IN :accidentIds
     """)
-    List<PersonMedicDto> findAllByAccidentIds(@Param("accidentIds") List<Long> accidentId);
+    List<PersonAccidentRoleDto<PersonMedicDto>> findAllByAccidentIds(@Param("accidentIds") List<Long> accidentId);
 
     @Query("""
     SELECT new com.akella.courseprojectbackend.dto.person.PersonMedicDto(p.id, p.name, p.surname, p.patronymic)
