@@ -83,7 +83,8 @@ public class AccidentController {
             response = AccidentDataDto.builder().accidentData(accidentList).personData(personList).build();
             getDataByRole(role, accidentIds, response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            if (e.getMessage().contains("permission")) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         return ResponseEntity.ok(response);
     }
