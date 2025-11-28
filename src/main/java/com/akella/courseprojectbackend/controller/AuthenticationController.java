@@ -37,6 +37,7 @@ public class AuthenticationController {
                     .secure(true)
                     .sameSite("Strict")
                     .path("/")
+                    .maxAge(86400)
                     .build();
             return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE,
                     responseCookie.toString()).build();
@@ -49,7 +50,15 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> logoutUser() {
         try {
             authenticationService.logout(ApplicationUtils.getEmailFromContext());
-            return ResponseEntity.status(HttpStatus.OK).build();
+            ResponseCookie responseCookie = ResponseCookie.from("Token", "")
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("Strict")
+                    .path("/")
+                    .maxAge(0)
+                    .build();
+            return ResponseEntity.status(HttpStatus.OK).header(HttpHeaders.SET_COOKIE,
+                    responseCookie.toString()).build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
