@@ -42,18 +42,19 @@ public class AccidentService {
 
     public List<? extends AccidentDto> getAllByDateTimeAddress(Date date, Time time, String addressStreet, String addressNumber,
                                                                List<Long> personIds, Integer pageIndex) {
+        PageRequest pageRequest = PageRequest.of(pageIndex, 10);
         switch (ApplicationUtils.getRoleFromContext()) {
             case MEDIC -> {
                 return accidentMedicRepository.findAllByDateAndTimeAndAddressStreetAndAddressNumberAndPersonIds(date, time, addressStreet,
-                        addressNumber, personIds, PageRequest.of(pageIndex, 5));
+                        addressNumber, personIds, pageRequest);
             }
             case INSURANCE -> {
                 return accidentInsuranceRepository.findAllByDateAndTimeAndAddressStreetAndAddressNumberAndPersonIds(date, time, addressStreet,
-                        addressNumber, personIds, PageRequest.of(pageIndex, 5));
+                        addressNumber, personIds, pageRequest);
             }
             default -> {
                 return accidentRepository.findAllByDateAndTimeAndAddressStreetAndAddressNumberAndPersonIds(date, time, addressStreet,
-                        addressNumber, personIds, PageRequest.of(pageIndex, 5));
+                        addressNumber, personIds, pageRequest);
             }
         }
     }
