@@ -22,6 +22,7 @@ public interface AccidentInsuranceRepository extends JpaRepository<AccidentInsur
       AND (CAST(:addressStreet AS STRING) IS NULL OR a.addressStreet = :addressStreet)
       AND (CAST(:addressNumber AS STRING) IS NULL OR a.addressNumber = :addressNumber)
       AND (:personIds IS NULL OR ap.person.id IN :personIds)
+    ORDER BY a.date DESC, a.time DESC
     """)
     List<AccidentInsuranceDto> findAllByDateAndTimeAndAddressStreetAndAddressNumberAndPersonIds(@Param("date") Date date,
                                                                                                 @Param("time") Time time,
