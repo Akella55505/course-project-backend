@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public record UserDataDto(List<UserAccidentDto> userAccidentData, List<UserVehicleDto> userVehicleData,
-                          List<UserAdministrativeDecisionDto> userAdministrativeDecisionData,
-                          List<UserInsuranceEvaluationDto> userInsuranceEvaluationData,
-                          List<UserInsurancePaymentDto> userInsurancePaymentData,
-                          List<UserCourtDecisionDto> userCourtDecisionData,
-                          List<AccidentVehicleDto> userAccidentVehicleData,
-                          List<UserViolationDto> userViolationData) {
+public record UserDataDto(List<UserAccidentDto> accidentData, List<UserVehicleDto> vehicleData,
+                          List<UserAdministrativeDecisionDto> administrativeDecisionData,
+                          List<UserInsuranceEvaluationDto> insuranceEvaluationData,
+                          List<UserInsurancePaymentDto> insurancePaymentData,
+                          List<UserCourtDecisionDto> courtDecisionData,
+                          List<AccidentVehicleDto> accidentVehicleData,
+                          List<UserViolationDto> violationData) {
 }
