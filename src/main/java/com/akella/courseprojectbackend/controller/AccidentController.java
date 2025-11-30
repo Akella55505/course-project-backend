@@ -91,17 +91,17 @@ public class AccidentController {
 
     @GetMapping("/user")
     public ResponseEntity<UserDataDto> getUserData() {
-        List<UserAccidentDto> userAccidentData = accidentService.getUserData();
-        List<UserVehicleDto> userVehicleData = vehicleService.getUserData();
-        List<UserAdministrativeDecisionDto> userAdministrativeDecisionData = administrativeDecisionService.getUserData();
-        List<UserInsuranceEvaluationDto> userInsuranceEvaluationData = insuranceEvaluationService.getUserData();
-        List<UserInsurancePaymentDto> userInsurancePaymentData = insurancePaymentService.getUserData();
-        List<UserCourtDecisionDto> userCourtDecisionData = courtDecisionService.getUserData();
-        List<AccidentVehicleDto> userAccidentVehicleData = accidentVehicleService.getUserData();
-        List<UserViolationDto> userViolationData = violationService.getUserData();
-        UserDataDto userData = new UserDataDto(userAccidentData, userVehicleData, userAdministrativeDecisionData,
-                userInsuranceEvaluationData, userInsurancePaymentData, userCourtDecisionData, userAccidentVehicleData,
-                userViolationData);
+        List<UserAccidentDto> accidentData = accidentService.getUserData();
+        List<UserVehicleDto> vehicleData = vehicleService.getUserData();
+        List<UserAdministrativeDecisionDto> administrativeDecisionData = administrativeDecisionService.getUserData();
+        List<UserInsuranceEvaluationDto> insuranceEvaluationData = insuranceEvaluationService.getUserData();
+        List<UserInsurancePaymentDto> insurancePaymentData = insurancePaymentService.getUserData();
+        List<UserCourtDecisionDto> courtDecisionData = courtDecisionService.getUserData();
+        List<AccidentVehicleDto> accidentVehicleData = accidentVehicleService.getUserData();
+        List<UserViolationDto> violationData = violationService.getUserData();
+        UserDataDto userData = new UserDataDto(accidentData, vehicleData, administrativeDecisionData,
+                insuranceEvaluationData, insurancePaymentData, courtDecisionData, accidentVehicleData,
+                violationData);
         return ResponseEntity.ok(userData);
     }
 
