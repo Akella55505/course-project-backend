@@ -51,9 +51,9 @@ public class PersonController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateEmailByPassportDetails(@RequestBody PassportDetails passportDetails, @RequestParam String email) {
+    public ResponseEntity<?> updateEmailByPassportDetails(@RequestBody PassportDetails passportDetails) {
         try {
-            personService.updateEmailByPassportDetails(passportDetails, email);
+            personService.updateEmailByPassportDetails(passportDetails);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

@@ -24,9 +24,9 @@ public class PolicemanController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateEmailByPolicemanId(@RequestParam Long policemanId, @RequestParam String email) {
+    public ResponseEntity<?> updateEmailByPolicemanId(@RequestParam Long policemanId) {
         try {
-            policemanService.setEmailByPolicemanId(policemanId, email);
+            policemanService.setEmailByPolicemanId(policemanId);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

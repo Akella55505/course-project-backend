@@ -1,5 +1,6 @@
 package com.akella.courseprojectbackend.service;
 
+import com.akella.courseprojectbackend.ApplicationUtils;
 import com.akella.courseprojectbackend.dto.PolicemanDto;
 import com.akella.courseprojectbackend.model.Policeman;
 import com.akella.courseprojectbackend.repository.PolicemanRepository;
@@ -11,7 +12,8 @@ import org.springframework.stereotype.Service;
 public class PolicemanService {
     private final PolicemanRepository policemanRepository;
 
-    public void setEmailByPolicemanId(Long policemanId, String email) {
+    public void setEmailByPolicemanId(Long policemanId) {
+        String email = ApplicationUtils.getEmailFromContext();
         policemanRepository.setEmailByPolicemanId(policemanId, email);
     }
 

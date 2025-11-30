@@ -24,9 +24,9 @@ public class MedicController {
     }
 
     @PatchMapping
-    public ResponseEntity<?> updateEmailByMedicId(@RequestParam Long medicId, @RequestParam String email) {
+    public ResponseEntity<?> updateEmailByMedicId(@RequestParam Long medicId) {
         try {
-            medicService.setEmailByMedicId(medicId, email);
+            medicService.setEmailByMedicId(medicId);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

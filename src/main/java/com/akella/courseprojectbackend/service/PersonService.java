@@ -39,9 +39,10 @@ public class PersonService {
         return personRepository.save(person).getId();
     }
 
-    public void updateEmailByPassportDetails(PassportDetails passportDetails, String email) {
+    public void updateEmailByPassportDetails(PassportDetails passportDetails) {
         PassportDetailsConverter passportDetailsConverter = new PassportDetailsConverter();
         String passportDetailsJson = passportDetailsConverter.convertToDatabaseColumn(passportDetails);
+        String email = ApplicationUtils.getEmailFromContext();
         personRepository.setEmailByPassportDetails(passportDetailsJson, email);
     }
 
