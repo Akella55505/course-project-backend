@@ -2,6 +2,7 @@ package com.akella.courseprojectbackend.controller;
 
 import com.akella.courseprojectbackend.ApplicationUtils;
 import com.akella.courseprojectbackend.dto.UserDto;
+import com.akella.courseprojectbackend.enums.Role;
 import com.akella.courseprojectbackend.security.AuthenticationResponse;
 import com.akella.courseprojectbackend.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,5 +65,10 @@ public class AuthenticationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @GetMapping("/role")
+    public ResponseEntity<Map<String, Role>> getUserRole() {
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("role", ApplicationUtils.getRoleFromContext()));
     }
 }
