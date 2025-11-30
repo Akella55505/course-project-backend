@@ -22,6 +22,7 @@ public interface AccidentRepository extends JpaRepository<Accident, Long> {
     SELECT new com.akella.courseprojectbackend.dto.userData.UserAccidentDto(a.id, a.date, a.time, a.addressStreet, a.addressNumber,
         a.assessmentStatus, a.considerationStatus)
     FROM Accident a
+    ORDER BY a.date DESC, a.time DESC
     """)
     List<UserAccidentDto> findAllUserData();
 
