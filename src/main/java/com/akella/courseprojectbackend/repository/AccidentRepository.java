@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -28,15 +27,15 @@ public interface AccidentRepository extends JpaRepository<Accident, Long> {
 
     @Modifying
     @Query(value = """
-    UPDATE accident SET assessment_status = :status WHERE id = :acc_id
+    UPDATE accident SET assessment_status = :status WHERE id = :accidentId
     """, nativeQuery = true)
-    void updateAssessmentStatus(@Param("status") String status, @Param("acc_id") Long accidentId);
+    void updateAssessmentStatus(String status, Long accidentId);
 
     @Modifying
     @Query(value = """
-    UPDATE accident SET consideration_status = :status WHERE id = :acc_id
+    UPDATE accident SET consideration_status = :status WHERE id = :accidentId
     """, nativeQuery = true)
-    void updateConsiderationStatus(@Param("status") String status, @Param("acc_id") Long accidentId);
+    void updateConsiderationStatus(String status, Long accidentId);
 
     @Query(value = """
     SELECT DISTINCT a FROM Accident a
@@ -48,11 +47,11 @@ public interface AccidentRepository extends JpaRepository<Accident, Long> {
       AND (:personIds IS NULL OR ap.person.id IN :personIds)
     ORDER BY a.date DESC, a.time DESC
     """)
-    List<AccidentBaseDto> findAllByDateAndTimeAndAddressStreetAndAddressNumberAndPersonIds(@Param("date") Date date,
-                                                                                           @Param("time") Time time,
-                                                                                           @Param("addressStreet") String addressStreet,
-                                                                                           @Param("addressNumber") String addressNumber,
-                                                                                           @Param("personIds") List<Long> personIds,
+    List<AccidentBaseDto> findAllByDateAndTimeAndAddressStreetAndAddressNumberAndPersonIds(Date date,
+                                                                                           Time time,
+                                                                                           String addressStreet,
+                                                                                           String addressNumber,
+                                                                                           List<Long> personIds,
                                                                                            Pageable pageable);
 
     @Query("""
