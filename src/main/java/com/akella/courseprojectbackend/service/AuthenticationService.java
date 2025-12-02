@@ -56,6 +56,7 @@ public class AuthenticationService {
                 config.setUsername(loginData.getEmail());
                 config.setPassword(loginData.getPassword());
                 config.setMaximumPoolSize(1);
+                config.setConnectionTimeout(7000);
                 HikariDataSource dataSource = new HikariDataSource(config);
                 dataSourceRouting.addDataSource(loginData.getEmail(), dataSource);
             }
