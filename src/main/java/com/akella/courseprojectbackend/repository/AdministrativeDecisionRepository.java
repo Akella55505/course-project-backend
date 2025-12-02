@@ -6,7 +6,6 @@ import com.akella.courseprojectbackend.model.AdministrativeDecision;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,14 +20,13 @@ public interface AdministrativeDecisionRepository extends JpaRepository<Administ
 
     @Modifying
     @Query(value = """
-    INSERT INTO administrative_decision (accident_id, person_id, policeman_id, decision) VALUES (:accident_id, :person_id,
-                                                                                                     :police_id, :decision)
+    INSERT INTO administrative_decision (accident_id, person_id, policeman_id, decision) VALUES (:accidentId, :personId,
+                                                                                                     :policemanId, :decision)
     """, nativeQuery = true)
-    void saveEntry(@Param("accident_id") Long accidentId, @Param("person_id") Long personId,
-                   @Param("police_id") Long policemanId, @Param("decision") String decision);
+    void saveEntry(Long accidentId, Long personId, Long policemanId, String decision);
 
     @Query("""
-    SELECT new com.akella.courseprojectbackend.dto.AdministrativeDecisionDto(ad.id, ad.person.id, ad.decision) FROM AdministrativeDecision ad
+    SELECT new com.akella.courseprojectbackend.dto.AdministrativeDecisionDto(ad.accident.id, ad.person.id, ad.decision) FROM AdministrativeDecision ad
     WHERE (ad.accident.id IN :accidentIds)
     """)
     List<AdministrativeDecisionDto> findAllByAccidentIds(List<Long> accidentIds);
