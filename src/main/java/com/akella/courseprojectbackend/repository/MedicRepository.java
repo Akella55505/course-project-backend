@@ -21,4 +21,9 @@ public interface MedicRepository extends JpaRepository<Medic, Long> {
     SELECT m.medicId FROM Medic m WHERE m.email = :email
     """)
     Long findMedicIdByEmail(String email);
+
+    @Query("""
+    SELECT EXISTS (SELECT 1 FROM Medic m WHERE m.email = :email)
+    """)
+    Boolean getIsRegistered(String email);
 }

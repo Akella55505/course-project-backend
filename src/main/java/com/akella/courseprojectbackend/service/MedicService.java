@@ -26,4 +26,9 @@ public class MedicService {
         String email = ApplicationUtils.getEmailFromContext();
         medicRepository.setEmailByMedicId(medicDto.medicId(), email);
     }
+
+    public Boolean getIsRegistered() {
+        String email = ApplicationUtils.getEmailFromContext();
+        return medicRepository.getIsRegistered(email);
+    }
 }

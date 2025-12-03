@@ -27,4 +27,9 @@ public class PolicemanService {
         String email = ApplicationUtils.getEmailFromContext();
         policemanRepository.setEmailByPolicemanId(policemanDto.policemanId(), email);
     }
+
+    public Boolean getIsRegistered() {
+        String email = ApplicationUtils.getEmailFromContext();
+        return policemanRepository.getIsRegistered(email);
+    }
 }

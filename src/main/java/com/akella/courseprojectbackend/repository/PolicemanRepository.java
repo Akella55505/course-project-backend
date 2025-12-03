@@ -21,4 +21,9 @@ public interface PolicemanRepository extends JpaRepository<Policeman, Long> {
     SELECT p.policemanId FROM Policeman p WHERE p.email = :email
     """)
     Long findPolicemanIdByEmail(String email);
+
+    @Query("""
+    SELECT EXISTS (SELECT 1 FROM Policeman p WHERE p.email = :email)
+    """)
+    Boolean getIsRegistered(String email);
 }
